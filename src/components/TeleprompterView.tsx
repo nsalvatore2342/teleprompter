@@ -164,9 +164,9 @@ export function TeleprompterView({ script, segments, settings, onSettingsChange,
       className="flex flex-1 overflow-hidden bg-gray-950"
       onMouseMove={showControls}
     >
-      {/* Segment sidebar */}
+      {/* Segment sidebar — hidden on mobile */}
       {segments.length > 1 && (
-        <div className="w-44 min-w-[11rem] border-r border-gray-800 bg-gray-950 flex flex-col overflow-hidden flex-shrink-0">
+        <div className="hidden sm:flex flex-col w-44 min-w-[11rem] border-r border-gray-800 bg-gray-950 overflow-hidden flex-shrink-0">
           <div className="px-3 py-2 border-b border-gray-800">
             <span className="text-xs font-semibold text-gray-500 uppercase tracking-widest">Segments</span>
           </div>
@@ -205,7 +205,7 @@ export function TeleprompterView({ script, segments, settings, onSettingsChange,
         <div
           ref={containerRef}
           className="teleprompter-scroll flex-1 overflow-y-scroll"
-          style={{ cursor: isPlaying ? 'none' : 'default' }}
+          style={{ cursor: isPlaying ? 'none' : 'default', touchAction: 'pan-y' }}
         >
           <div
             className={settings.mirrored ? 'mirrored' : ''}

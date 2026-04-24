@@ -9,9 +9,10 @@ interface Props {
   onRename: (id: string, name: string) => void;
   onDelete: (id: string) => void;
   onDuplicate: (id: string) => void;
+  onClose?: () => void;
 }
 
-export function Sidebar({ scripts, activeId, onSelect, onCreate, onRename, onDelete, onDuplicate }: Props) {
+export function Sidebar({ scripts, activeId, onSelect, onCreate, onRename, onDelete, onDuplicate, onClose }: Props) {
   const [renamingId, setRenamingId] = useState<string | null>(null);
   const [renameValue, setRenameValue] = useState('');
   const [menuId, setMenuId] = useState<string | null>(null);
@@ -47,13 +48,24 @@ export function Sidebar({ scripts, activeId, onSelect, onCreate, onRename, onDel
     <div className="flex flex-col w-56 min-w-[14rem] bg-gray-950 border-r border-gray-800 h-full">
       <div className="px-4 pt-4 pb-2 flex items-center justify-between">
         <span className="text-xs font-semibold text-gray-400 uppercase tracking-widest">Scripts</span>
-        <button
-          onClick={onCreate}
-          title="New script"
-          className="w-6 h-6 flex items-center justify-center rounded text-gray-400 hover:text-white hover:bg-gray-700 transition-colors text-lg leading-none"
-        >
-          +
-        </button>
+        <div className="flex items-center gap-1">
+          <button
+            onClick={onCreate}
+            title="New script"
+            className="w-7 h-7 flex items-center justify-center rounded text-gray-400 hover:text-white hover:bg-gray-700 transition-colors text-lg leading-none"
+          >
+            +
+          </button>
+          {onClose && (
+            <button
+              onClick={onClose}
+              className="sm:hidden w-7 h-7 flex items-center justify-center rounded text-gray-500 hover:text-white hover:bg-gray-700 transition-colors text-xl leading-none"
+              aria-label="Close"
+            >
+              ×
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="flex-1 overflow-y-auto py-1">
@@ -85,7 +97,7 @@ export function Sidebar({ scripts, activeId, onSelect, onCreate, onRename, onDel
 
             {renamingId !== script.id && !script.readonly && (
               <button
-                className="opacity-0 group-hover:opacity-100 ml-1 p-0.5 rounded hover:bg-white/10 transition-opacity text-gray-400 hover:text-white"
+                className="opacity-0 group-hover:opacity-100 group-active:opacity-100 ml-1 p-1.5 rounded hover:bg-white/10 active:bg-white/10 transition-opacity text-gray-400 hover:text-white"
                 onClick={e => { e.stopPropagation(); setMenuId(menuId === script.id ? null : script.id); }}
               >
                 ···

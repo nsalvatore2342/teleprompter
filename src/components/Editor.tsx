@@ -54,8 +54,8 @@ export function Editor({ script, segments, settings, onContentChange, onJumpToSe
         />
       </div>
 
-      {/* Segment panel */}
-      <div className="w-52 min-w-[13rem] border-l border-gray-800 bg-gray-950 flex flex-col overflow-hidden">
+      {/* Segment panel — hidden on mobile */}
+      <div className="hidden lg:flex flex-col w-52 min-w-[13rem] border-l border-gray-800 bg-gray-950 overflow-hidden">
         <div className="px-3 py-2 border-b border-gray-800">
           <span className="text-xs font-semibold text-gray-400 uppercase tracking-widest">Segments</span>
         </div>

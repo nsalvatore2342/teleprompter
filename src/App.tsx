@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { View, DEFAULT_SETTINGS, Settings } from './types';
 import { useScripts } from './hooks/useScripts';
 import { parseSegments } from './utils/segments';
@@ -28,6 +28,12 @@ export default function App() {
   const [showTips, setShowTips] = useState(false);
   const [showNewScript, setShowNewScript] = useState(false);
   const [newScriptStep, setNewScriptStep] = useState<NewScriptStep>('method');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // Close sidebar when switching to teleprompter
+  useEffect(() => {
+    if (view === 'teleprompter') setSidebarOpen(false);
+  }, [view]);
 
   const segments = useMemo(
     () => parseSegments(activeScript?.content ?? ''),
@@ -36,43 +42,76 @@ export default function App() {
 
   const updateSettings = (patch: Partial<Settings>) => setSettings(prev => ({ ...prev, ...patch }));
 
-  const openNewScriptModal = () => { setNewScriptStep('method'); setShowNewScript(true); };
+  const openNewScriptModal = () => { setNewScriptStep('method'); setShowNewScript(true); setSidebarOpen(false); };
   const openImportModal = () => { setNewScriptStep('import'); setShowNewScript(true); };
 
   return (
     <div className="flex h-screen bg-gray-900 text-white overflow-hidden">
-      {view === 'editor' && (
-        <Sidebar
-          scripts={scripts}
-          activeId={activeId}
-          onSelect={setActiveId}
-          onCreate={openNewScriptModal}
-          onRename={renameScript}
-          onDelete={deleteScript}
-          onDuplicate={duplicateScript}
+
+      {/* Mobile sidebar backdrop */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 z-30 bg-black/60 sm:hidden"
+          onClick={() => setSidebarOpen(false)}
         />
       )}
 
-      <div className="flex flex-1 flex-col overflow-hidden">
+      {/* Sidebar — fixed drawer on mobile, static column on desktop */}
+      {view === 'editor' && (
+        <div className={`
+          fixed sm:relative inset-y-0 left-0 z-40 sm:z-auto
+          transition-transform duration-200 ease-in-out
+          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full sm:translate-x-0'}
+        `}>
+          <Sidebar
+            scripts={scripts}
+            activeId={activeId}
+            onSelect={(id) => { setActiveId(id); setSidebarOpen(false); }}
+            onCreate={openNewScriptModal}
+            onRename={renameScript}
+            onDelete={deleteScript}
+            onDuplicate={duplicateScript}
+            onClose={() => setSidebarOpen(false)}
+          />
+        </div>
+      )}
+
+      <div className="flex flex-1 flex-col overflow-hidden min-w-0">
         {/* Top bar */}
-        <div className="flex items-center justify-between px-4 py-2 bg-gray-900 border-b border-gray-800 flex-shrink-0 gap-3">
+        <div className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-gray-900 border-b border-gray-800 flex-shrink-0">
+
+          {/* Hamburger — mobile only, editor only */}
+          {view === 'editor' && (
+            <button
+              onClick={() => setSidebarOpen(v => !v)}
+              className="sm:hidden w-9 h-9 flex items-center justify-center rounded-lg text-gray-400 hover:text-white hover:bg-gray-700 transition-colors flex-shrink-0 text-lg"
+              aria-label="Open scripts"
+            >
+              ☰
+            </button>
+          )}
+
+          {/* New Script button */}
           <button
             onClick={openNewScriptModal}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-semibold transition-colors flex-shrink-0 shadow-sm"
+            className="flex items-center gap-1 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white rounded-lg text-xs font-semibold transition-colors flex-shrink-0 shadow-sm"
           >
             + New Script
           </button>
-          {/* Left: brand + script name */}
-          <div className="flex items-center gap-3 min-w-0">
+
+          {/* Brand + script name */}
+          <div className="flex items-center gap-2 min-w-0 flex-1">
             <span className="text-indigo-400 font-semibold text-sm tracking-wide flex-shrink-0 hidden sm:inline">Teleprompter</span>
             {activeScript && view === 'editor' && (
-              <span className="text-gray-600 text-sm truncate hidden md:inline">/ {activeScript.name}</span>
+              <span className="text-gray-600 text-xs sm:text-sm truncate hidden sm:inline">/ {activeScript.name}</span>
             )}
           </div>
 
-          {/* Right: shortcuts + toggle */}
+          {/* Right: shortcuts (desktop only) + view toggle */}
           <div className="flex items-center gap-2 flex-shrink-0">
-            <div className="relative">
+
+            {/* Keyboard shortcuts — hidden on mobile */}
+            <div className="relative hidden sm:block">
               <button
                 onClick={() => setShowTips(v => !v)}
                 title="Keyboard shortcuts"
@@ -83,7 +122,7 @@ export default function App() {
                 }`}
               >
                 <span>⌨</span>
-                <span className="hidden sm:inline">Shortcuts</span>
+                <span>Shortcuts</span>
               </button>
 
               {showTips && (
@@ -107,18 +146,19 @@ export default function App() {
               )}
             </div>
 
+            {/* Edit/Home | Preview toggle */}
             <div className="flex items-center gap-1 bg-gray-800 rounded-lg p-0.5">
               <button
                 onClick={() => setView('editor')}
-                className={`px-3 py-1 rounded text-sm font-medium transition-colors ${
+                className={`px-2.5 sm:px-3 py-1 rounded text-xs sm:text-sm font-medium transition-colors whitespace-nowrap ${
                   view === 'editor' ? 'bg-gray-600 text-white shadow' : 'text-gray-400 hover:text-white'
                 }`}
               >
-                ✏ Edit / Home
+                <span className="hidden sm:inline">✏ </span>Edit / Home
               </button>
               <button
                 onClick={() => setView('teleprompter')}
-                className={`px-3 py-1 rounded text-sm font-medium transition-colors ${
+                className={`px-2.5 sm:px-3 py-1 rounded text-xs sm:text-sm font-medium transition-colors whitespace-nowrap ${
                   view === 'teleprompter' ? 'bg-indigo-600 text-white shadow' : 'text-gray-400 hover:text-white'
                 }`}
               >
