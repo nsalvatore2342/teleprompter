@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* Hide scrollbar in teleprompter but keep scroll functionality */
+.teleprompter-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  overflow-y: scroll;
+}
+.teleprompter-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* Mirrored text */
+.mirrored {
+  transform: scaleX(-1);
+}
+
+/* Script editor */
+.script-editor {
+  resize: none;
+  font-family: 'Georgia', 'Times New Roman', serif;
+}
+
+/* Segment heading in teleprompter */
+.tp-heading {
+  opacity: 0.5;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-size: 0.6em;
+  margin-bottom: 0.5em;
+  margin-top: 1.5em;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  padding-bottom: 0.25em;
+}
+
+/* Slider styling */
+input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 2px;
+  background: #374151;
+  outline: none;
+}
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #6366f1;
+  cursor: pointer;
+}
+input[type='range']::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #6366f1;
+  cursor: pointer;
+  border: none;
+}
