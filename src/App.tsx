@@ -56,15 +56,14 @@ export default function App() {
       <div className="flex flex-1 flex-col overflow-hidden">
         {/* Top bar */}
         <div className="flex items-center justify-between px-4 py-2 bg-gray-900 border-b border-gray-800 flex-shrink-0 gap-3">
-          {/* Left: New Script + brand */}
+          <button
+            onClick={openNewScriptModal}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-semibold transition-colors flex-shrink-0 shadow-sm"
+          >
+            + New Script
+          </button>
+          {/* Left: brand + script name */}
           <div className="flex items-center gap-3 min-w-0">
-            <button
-              onClick={openNewScriptModal}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-semibold transition-colors flex-shrink-0 shadow-sm"
-            >
-              + New Script
-            </button>
-            <span className="text-gray-700 hidden sm:inline">|</span>
             <span className="text-indigo-400 font-semibold text-sm tracking-wide flex-shrink-0 hidden sm:inline">Teleprompter</span>
             {activeScript && view === 'editor' && (
               <span className="text-gray-600 text-sm truncate hidden md:inline">/ {activeScript.name}</span>
@@ -115,7 +114,7 @@ export default function App() {
                   view === 'editor' ? 'bg-gray-600 text-white shadow' : 'text-gray-400 hover:text-white'
                 }`}
               >
-                ✏ Edit
+                ✏ Edit / Home
               </button>
               <button
                 onClick={() => setView('teleprompter')}
