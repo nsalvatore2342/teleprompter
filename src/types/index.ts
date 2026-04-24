@@ -4,6 +4,7 @@ export interface Script {
   content: string;
   createdAt: number;
   updatedAt: number;
+  readonly?: boolean;
 }
 
 export interface Segment {

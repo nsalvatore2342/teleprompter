@@ -83,13 +83,17 @@ export function Sidebar({ scripts, activeId, onSelect, onCreate, onRename, onDel
               <span className="flex-1 text-sm truncate">{script.name}</span>
             )}
 
-            {renamingId !== script.id && (
+            {renamingId !== script.id && !script.readonly && (
               <button
                 className="opacity-0 group-hover:opacity-100 ml-1 p-0.5 rounded hover:bg-white/10 transition-opacity text-gray-400 hover:text-white"
                 onClick={e => { e.stopPropagation(); setMenuId(menuId === script.id ? null : script.id); }}
               >
                 ···
               </button>
+            )}
+
+            {script.readonly && (
+              <span className="ml-1 text-xs text-gray-600 flex-shrink-0" title="Sample script (pinned)">★</span>
             )}
 
             {menuId === script.id && (

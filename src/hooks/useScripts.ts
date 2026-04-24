@@ -7,6 +7,7 @@ const ACTIVE_KEY = 'teleprompter_active_id';
 const SAMPLE_SCRIPT: Script = {
   id: 'sample',
   name: 'Sample Script',
+  readonly: true,
   content: `# Intro
 
 Hey everyone, welcome back to the channel!
@@ -117,12 +118,13 @@ export function useScripts() {
   }, []);
 
   const deleteScript = useCallback((id: string) => {
+    // sample script is protected
+    if (id === 'sample') return;
     setScripts(prev => {
       const next = prev.filter(s => s.id !== id);
       if (next.length === 0) {
-        const fallback = { ...SAMPLE_SCRIPT, id: `script-${Date.now()}` };
-        setActiveId(fallback.id);
-        return [fallback];
+        setActiveId('sample');
+        return [SAMPLE_SCRIPT];
       }
       if (id === activeId) setActiveId(next[0].id);
       return next;
@@ -133,10 +135,22 @@ export function useScripts() {
     const src = scripts.find(s => s.id === id);
     if (!src) return;
     const newId = `script-${Date.now()}`;
-    const copy: Script = { ...src, id: newId, name: `${src.name} (copy)`, createdAt: Date.now(), updatedAt: Date.now() };
+    const copy: Script = { ...src, id: newId, readonly: false, name: `${src.name} (copy)`, createdAt: Date.now(), updatedAt: Date.now() };
     setScripts(prev => [...prev, copy]);
     setActiveId(newId);
   }, [scripts]);
 
-  return { scripts, activeScript, activeId, setActiveId, createScript, updateContent, renameScript, deleteScript, duplicateScript };
+  const createWithContent = useCallback((name: string, content: string) => {
+    const id = `script-${Date.now()}`;
+    const newScript: Script = { id, name: name || 'Imported Script', content, createdAt: Date.now(), updatedAt: Date.now() };
+    setScripts(prev => [...prev, newScript]);
+    setActiveId(id);
+  }, []);
+
+  // Always ensure sample script exists at the top
+  const scriptsWithSample = scripts.find(s => s.id === 'sample')
+    ? scripts
+    : [SAMPLE_SCRIPT, ...scripts];
+
+  return { scripts: scriptsWithSample, activeScript, activeId, setActiveId, createScript, updateContent, renameScript, deleteScript, duplicateScript, createWithContent };
 }
