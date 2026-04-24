@@ -48,24 +48,15 @@ export function Sidebar({ scripts, activeId, onSelect, onCreate, onRename, onDel
     <div className="flex flex-col w-56 min-w-[14rem] bg-gray-950 border-r border-gray-800 h-full">
       <div className="px-4 pt-4 pb-2 flex items-center justify-between">
         <span className="text-xs font-semibold text-gray-400 uppercase tracking-widest">Scripts</span>
-        <div className="flex items-center gap-1">
+        {onClose && (
           <button
-            onClick={onCreate}
-            title="New script"
-            className="w-7 h-7 flex items-center justify-center rounded text-gray-400 hover:text-white hover:bg-gray-700 transition-colors text-lg leading-none"
+            onClick={onClose}
+            className="sm:hidden w-7 h-7 flex items-center justify-center rounded text-gray-500 hover:text-white hover:bg-gray-700 transition-colors text-xl leading-none"
+            aria-label="Close"
           >
-            +
+            ×
           </button>
-          {onClose && (
-            <button
-              onClick={onClose}
-              className="sm:hidden w-7 h-7 flex items-center justify-center rounded text-gray-500 hover:text-white hover:bg-gray-700 transition-colors text-xl leading-none"
-              aria-label="Close"
-            >
-              ×
-            </button>
-          )}
-        </div>
+        )}
       </div>
 
       <div className="flex-1 overflow-y-auto py-1">
@@ -124,14 +115,6 @@ export function Sidebar({ scripts, activeId, onSelect, onCreate, onRename, onDel
         ))}
       </div>
 
-      <div className="px-3 py-3 border-t border-gray-800">
-        <button
-          onClick={onCreate}
-          className="w-full py-1.5 text-sm text-gray-400 hover:text-white border border-dashed border-gray-700 hover:border-gray-500 rounded transition-colors"
-        >
-          + New Script
-        </button>
-      </div>
     </div>
   );
 }
